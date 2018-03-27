@@ -2,21 +2,21 @@ const postcss = require('postcss');
 const fs = require('fs-extra');
 const path = require('path');
 
-const run = config => {
+const run = (config, {logger}) => {
 
 	const promises = config.files.map(fileConfig => processFile(fileConfig, config.plugins));
 
 	return Promise.all(promises)
 		.then(() => {
 			const message = `${config.files.length} stylesheet(s) processed`;
-			console.log(message);
+			logger.info(message);
 			return {
 				status: 'complete',
 				message: message
 			};
 		})
 		.catch(e => {
-			console.log(e);
+			logger.error(e);
 			return {
 				status: 'error',
 				error: e
