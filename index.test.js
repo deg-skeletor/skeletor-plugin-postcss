@@ -14,6 +14,15 @@ const plugin2 = { name: 'plugin2' };
 jest.mock('path');
 jest.mock('postcss');
 
+const logger = {
+	info: () => {},
+	error: () => {}
+};
+
+const options = {
+	logger
+};
+
 beforeEach(() => {
  	require('fs-extra').__setMockFiles({ 
 		[srcFilepath1]: cssContent1,
@@ -38,7 +47,7 @@ test('run() processes one file with expected PostCSS plugins', () => {
 	}
 
 	expect.assertions(1);
-	return postCssPlugin().run(config)
+	return postCssPlugin().run(config, options)
 		.then(response => {
 			expect(postcss).toBeCalledWith([plugin1, plugin2]);
 		});
@@ -59,7 +68,7 @@ test('run() processes one file with expected source CSS', () => {
 	}
 
 	expect.assertions(1);
-	return postCssPlugin().run(config)
+	return postCssPlugin().run(config, options)
 		.then(response => {
 			expect(postcssProcessSpy).toBeCalledWith(cssContent1, {
 				from: srcFilepath1,
@@ -82,7 +91,7 @@ test('run() writes one file to destination', () => {
 	}
 
 	expect.assertions(1);
-	return postCssPlugin().run(config)
+	return postCssPlugin().run(config, options)
 		.then(response => {
 			expect(fsWriteFileSpy).toBeCalledWith(destFilepath1, cssContent1);
 			fsWriteFileSpy.mockReset();
@@ -108,7 +117,7 @@ test('run() writes multiple files to destinations', () => {
 	}
 
 	expect.assertions(3);
-	return postCssPlugin().run(config)
+	return postCssPlugin().run(config, options)
 		.then(response => {
 			expect(fsWriteFileSpy.mock.calls.length).toBe(2);
 			expect(fsWriteFileSpy.mock.calls[0]).toEqual([destFilepath1, cssContent1]);
