@@ -1,4 +1,7 @@
 # Skeletor PostCSS Plugin
+[![Build Status](https://travis-ci.org/deg-skeletor/skeletor-plugin-postcss.svg?branch=master)](https://travis-ci.org/deg-skeletor/skeletor-plugin-postcss)
+
+
 This plugin transforms CSS using [PostCSS](https://github.com/postcss/postcss) and is part of the Skeletor ecosystem. To learn more about Skeletor, [go here](https://github.com/deg-skeletor/skeletor-core).
 
 ## Installation
