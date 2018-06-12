@@ -4,11 +4,18 @@ const path = require('path');
 
 const run = (config, {logger}) => {
 
+	if(!Array.isArray(config.files)) {
+		return Promise.resolve({
+			status: 'error',
+			message: 'Configuration does not contain a valid "files" property.'
+		});
+	}
+
 	const promises = config.files.map(fileConfig => processFile(fileConfig, config.plugins));
 
 	return Promise.all(promises)
 		.then(() => {
-			const message = `${config.files.length} stylesheet(s) processed`;
+			const message = `${config.files.length} stylesheet(s) processed.`;
 			logger.info(message);
 			return {
 				status: 'complete',
@@ -19,7 +26,7 @@ const run = (config, {logger}) => {
 			logger.error(e);
 			return {
 				status: 'error',
-				error: e
+				message: e.message
 			};
 		});
 
