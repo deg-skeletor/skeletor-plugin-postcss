@@ -14,6 +14,9 @@ const plugin2 = { name: 'plugin2' };
 jest.mock('path');
 jest.mock('postcss');
 
+const postcss = require('postcss');
+const fs = require('fs-extra');
+
 const logger = {
 	info: () => {},
 	error: () => {}
@@ -24,15 +27,92 @@ const options = {
 };
 
 beforeEach(() => {
+	jest.clearAllMocks();
+	postcss.__setThrowProcessError(false);
+
  	require('fs-extra').__setMockFiles({ 
 		[srcFilepath1]: cssContent1,
 		[srcFilepath2]: cssContent2
 	});
 });
 
-test('run() processes one file with expected PostCSS plugins', () => {
-	const postcss = require('postcss');
+test('run() returns an error status if no files configuration exists', () => {
+	const expectedResponse = {
+		status: 'error',
+		message: 'Configuration does not contain a valid "files" property.'
+	};
+
+	expect.assertions(1);
+	return postCssPlugin().run({}, options)
+		.then(response => {
+			expect(response).toEqual(expectedResponse);
+		}); 
+});
+
+test('run() returns complete status when no files specified', () => {
+	const expectedResponse = {
+		status: 'complete',
+		message: '0 stylesheet(s) processed.'
+	};
 	
+	const config = {
+		files: []
+	};
+	
+	expect.assertions(1);
+	return postCssPlugin().run(config, options)
+		.then(response => {
+			expect(response).toEqual(expectedResponse);
+		});
+});
+
+test('run() returns complete status when 1 file specified', () => {	
+	const config = {
+		files: [
+			{
+				src: srcFilepath1,
+				dest: destFilepath1
+			}
+		]
+	}
+
+	const expectedResponse = {
+		status: 'complete',
+		message: '1 stylesheet(s) processed.'
+	}
+
+	expect.assertions(1);
+	return postCssPlugin().run(config, options)
+		.then(response => {
+			expect(response).toEqual(expectedResponse);
+		});
+});
+
+test('run() returns an error status when an error occurs', () => {
+	postcss.__setThrowProcessError(true);
+	
+	const config = {
+		files: [
+			{
+				src: srcFilepath1,
+				dest: destFilepath1
+			}
+		]
+	};
+
+	const expectedResponse = {
+		status: 'error',
+		message: 'error'
+	};
+
+	expect.assertions(1);
+	return postCssPlugin().run(config, options)
+		.then(response => {
+			expect(response).toEqual(expectedResponse);
+		});
+});
+
+test('run() processes one file with expected PostCSS plugins', () => {	
 	const config = {
 		files: [
 			{
@@ -54,8 +134,7 @@ test('run() processes one file with expected PostCSS plugins', () => {
 });
 
 test('run() processes one file with expected source CSS', () => {
-	const postcss = require('postcss')();
-	const postcssProcessSpy = jest.spyOn(postcss, 'process')
+	const postcssProcessSpy = jest.spyOn(postcss(), 'process')
 	
 	const config = {
 		files: [
@@ -78,7 +157,6 @@ test('run() processes one file with expected source CSS', () => {
 });
 
 test('run() writes one file to destination', () => {
-	const fs = require('fs-extra');
 	const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
 	
 	const config = {
@@ -100,7 +178,6 @@ test('run() writes one file to destination', () => {
 });
 
 test('run() writes multiple files to destinations', () => {
-	const fs = require('fs-extra');
 	const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
 
 	const config = {
