@@ -1,5 +1,5 @@
 {
-  "name": "skeletor-plugin-postcss",
+  "name": "@skeletor/plugin-postcss",
   "version": "0.1.0",
   "description": "A PostCSS Skeletor plugin",
   "main": "index.js",
@@ -16,5 +16,13 @@
   "devDependencies": {
     "eslint": "^4.19.1",
     "jest": "^22.4.4"
-  }
+  },
+  "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [
+        "skeletor",
+        "skeletor-plugin",
+        "postcss"
+    ]
 }
