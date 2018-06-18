@@ -1,5 +1,5 @@
 {
-  "name": "@skeletor/plugin-postcss",
+  "name": "@deg-skeletor/plugin-postcss",
   "version": "0.1.0",
   "description": "A PostCSS Skeletor plugin",
   "main": "index.js",
