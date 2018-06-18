@@ -1,6 +1,15 @@
 language: node_js
 node_js:
-  - "node"
+- node
 cache:
   directories:
-    - "node_modules"
+  - node_modules
+deploy:
+  provider: npm
+  email: scheul93@gmail.com
+  api_key:
+    secure: IbIIwOu1KVqdIisrsDR/oWN4I+8ncMizJhpj68zlUzyke3rdhpBzH4lAd6TO73JP5dWTPvy1D19ZQsLuAUyu83uewDErXeQDS0NhPg5XV3cADLcKQcMqW1JDkhFwaVfZ1jA6VideyGD/dieGGobc/7f7U3oTyz3+/IpD8Ko6Z3Qf5uJrgVRIUvQOHH7jVHEBqQYnaaI26oLaC3ydbWRD3TylHNre7PCiDXD/PDagtIAqdsa5HOo8xOHvlb5fGo6ucw1zVclcKYt6b2AMtqEJTSpaQ40/2eHVLRyVi+1hQGGYci7yTFCvnOl2wx4w9lMtHx+2y8f0lE5HNAdMpciKaL8a+l9nWIXSNOoacz0I9ij6UkHGu+5J6u+TlCCDbJrW2GBwIrmRVAYvXtE/vwR4Um/H/k/RuPi9UVJjB0Wlb51j3IGgj+ceb6Xn0M5UXORUV/Rjc2xgiNeCESdu0fBZjqZhn5WEhiHcnEJmHUZjrkl8M8tRSkmAzwai39kn1GrunWvRw038p44++/Ls4NCHf6l3hbdohilIzCDs2AcTO3Xc8vk7eb4789imvQIETwXmn3xTisqSN2pW/Fx7+isGrjM4y7XPEsD0eJhYADeg09Det/HhHtiXOT4bjC1ZU45wA0amjhSdr/wRdOyuKdRweBsR2LHDvv63ssd+KEk/0l8=
+  on:
+    branch: master
+    tags: true
+    repo: deg-skeletor/skeletor-plugin-postcss
