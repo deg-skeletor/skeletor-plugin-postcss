@@ -9,6 +9,13 @@
   },
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deg-skeletor/skeletor-plugin-postcss.git"
+  },
+  "peerDependencies": {
+    "@deg-skeletor/core": "^0.1.0"
+  },
   "dependencies": {
     "fs-extra": "^5.0.0",
     "postcss": "^6.0.22"
@@ -18,11 +25,11 @@
     "jest": "^22.4.4"
   },
   "publishConfig": {
-        "access": "public"
-    },
-    "keywords": [
-        "skeletor",
-        "skeletor-plugin",
-        "postcss"
-    ]
+      "access": "public"
+  },
+  "keywords": [
+      "skeletor",
+      "skeletor-plugin",
+      "postcss"
+   ]
 }
