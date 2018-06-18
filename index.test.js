@@ -157,6 +157,7 @@ test('run() processes one file with expected source CSS', () => {
 });
 
 test('run() writes one file to destination', () => {
+	const fsEnsureDirSpy = jest.spyOn(fs, 'ensureDir');
 	const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
 	
 	const config = {
@@ -168,12 +169,11 @@ test('run() writes one file to destination', () => {
 		]
 	}
 
-	expect.assertions(1);
+	expect.assertions(2);
 	return postCssPlugin().run(config, options)
 		.then(response => {
+			expect(fsEnsureDirSpy).toBeCalledWith('dest');
 			expect(fsWriteFileSpy).toBeCalledWith(destFilepath1, cssContent1);
-			fsWriteFileSpy.mockReset();
-  			fsWriteFileSpy.mockRestore();
 		});
 });
 
@@ -199,7 +199,5 @@ test('run() writes multiple files to destinations', () => {
 			expect(fsWriteFileSpy.mock.calls.length).toBe(2);
 			expect(fsWriteFileSpy.mock.calls[0]).toEqual([destFilepath1, cssContent1]);
 			expect(fsWriteFileSpy.mock.calls[1]).toEqual([destFilepath2, cssContent2]);
-			fsWriteFileSpy.mockReset();
-  			fsWriteFileSpy.mockRestore();
 		});
 });

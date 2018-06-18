@@ -17,8 +17,13 @@ const writeFile = (filepath, contents) => {
 	return Promise.resolve(true);
 }
 
+const ensureDir = dirPath => {
+	return Promise.resolve(true);
+}
+
 fsExtra.__setMockFiles = __setMockFiles;
 fsExtra.readFile = readFile;
 fsExtra.writeFile = writeFile;
+fsExtra.ensureDir = ensureDir;
 
 module.exports = fsExtra;
