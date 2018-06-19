@@ -43,7 +43,10 @@ const processFile = (fileConfig, plugins) => {
 				to: destFilepath
 			})
 		)
-		.then(result => fs.writeFile(destFilepath, result.css));
+		.then(result => {
+			return fs.ensureDir(path.dirname(destFilepath))
+				.then(() => fs.writeFile(destFilepath, result.css));
+		});
 };
 
 module.exports = skeletorPluginPostCss = () => (
