@@ -1,6 +1,6 @@
 {
   "name": "@deg-skeletor/plugin-postcss",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "A PostCSS Skeletor plugin",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "url": "git+https://github.com/deg-skeletor/skeletor-plugin-postcss.git"
   },
   "peerDependencies": {
-    "@deg-skeletor/core": "^0.1.0"
+    "@deg-skeletor/core": "^1.0.0"
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
