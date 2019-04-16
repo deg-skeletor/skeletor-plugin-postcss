@@ -11,7 +11,7 @@ const run = (config, {logger}) => {
 		});
 	}
 
-	const promises = config.files.map(fileConfig => processFile(fileConfig, config.plugins));
+	const promises = config.files.map(fileConfig => processFile(fileConfig, config.plugins, logger));
 
 	return Promise.all(promises)
 		.then(() => {
@@ -32,7 +32,7 @@ const run = (config, {logger}) => {
 
 };
 
-const processFile = (fileConfig, plugins) => {
+const processFile = (fileConfig, plugins, logger) => {
 	const srcFilepath = path.resolve(process.cwd(), fileConfig.src);
 	const destFilepath = path.resolve(process.cwd(), fileConfig.dest);
 
@@ -44,10 +44,16 @@ const processFile = (fileConfig, plugins) => {
 			})
 		)
 		.then(result => {
+			displayWarnings(result, logger);
 			return fs.ensureDir(path.dirname(destFilepath))
 				.then(() => fs.writeFile(destFilepath, result.css));
 		});
 };
+
+const displayWarnings = (result, logger) => {
+	const warnings = result.warnings();
+	warnings.forEach(warning => logger.warn(`${warning.type}: ${warning.text}`));
+}
 
 module.exports = skeletorPluginPostCss = () => (
 	{
