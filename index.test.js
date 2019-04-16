@@ -18,8 +18,9 @@ const postcss = require('postcss');
 const fs = require('fs-extra');
 
 const logger = {
-	info: () => {},
-	error: () => {}
+	info: () => jest.fn(),
+	warn: () => jest.fn(),
+	error: () => jest.fn()
 };
 
 const options = {
@@ -28,7 +29,7 @@ const options = {
 
 beforeEach(() => {
 	jest.clearAllMocks();
-	postcss.__setThrowProcessError(false);
+	postcss.__reset();
 
  	require('fs-extra').__setMockFiles({ 
 		[srcFilepath1]: cssContent1,
@@ -200,4 +201,31 @@ test('run() writes multiple files to destinations', () => {
 			expect(fsWriteFileSpy.mock.calls[0]).toEqual([destFilepath1, cssContent1]);
 			expect(fsWriteFileSpy.mock.calls[1]).toEqual([destFilepath2, cssContent2]);
 		});
+});
+
+test('run() displays warnings', async () => {	
+	loggerWarnSpy = jest.spyOn(logger, 'warn');
+
+	const config = {
+		files: [
+			{
+				src: srcFilepath1,
+				dest: destFilepath1
+			}
+		]
+	};
+
+	postcss.__setWarnings([
+		'warning 1',
+		'warning 2'
+	]);
+	
+	await postCssPlugin().run(config, options); 
+
+	const expectedWarning1 = 'warning: warning 1';
+	const expectedWarning2 = 'warning: warning 2';
+
+	expect(loggerWarnSpy).toHaveBeenCalledTimes(2);
+	expect(loggerWarnSpy.mock.calls[0]).toEqual([expectedWarning1]);
+	expect(loggerWarnSpy.mock.calls[1]).toEqual([expectedWarning2]);
 });
