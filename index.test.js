@@ -31,7 +31,7 @@ beforeEach(() => {
 	jest.clearAllMocks();
 	postcss.__reset();
 
- 	require('fs-extra').__setMockFiles({ 
+ 	require('fs-extra').__setMockFiles({
 		[srcFilepath1]: cssContent1,
 		[srcFilepath2]: cssContent2
 	});
@@ -47,7 +47,7 @@ test('run() returns an error status if no files configuration exists', () => {
 	return postCssPlugin().run({}, options)
 		.then(response => {
 			expect(response).toEqual(expectedResponse);
-		}); 
+		});
 });
 
 test('run() returns complete status when no files specified', () => {
@@ -55,11 +55,11 @@ test('run() returns complete status when no files specified', () => {
 		status: 'complete',
 		message: '0 stylesheet(s) processed.'
 	};
-	
+
 	const config = {
 		files: []
 	};
-	
+
 	expect.assertions(1);
 	return postCssPlugin().run(config, options)
 		.then(response => {
@@ -67,7 +67,7 @@ test('run() returns complete status when no files specified', () => {
 		});
 });
 
-test('run() returns complete status when 1 file specified', () => {	
+test('run() returns complete status when 1 file specified', () => {
 	const config = {
 		files: [
 			{
@@ -91,7 +91,7 @@ test('run() returns complete status when 1 file specified', () => {
 
 test('run() returns an error status when an error occurs', () => {
 	postcss.__setThrowProcessError(true);
-	
+
 	const config = {
 		files: [
 			{
@@ -113,7 +113,7 @@ test('run() returns an error status when an error occurs', () => {
 		});
 });
 
-test('run() processes one file with expected PostCSS plugins', () => {	
+test('run() processes one file with expected PostCSS plugins', () => {
 	const config = {
 		files: [
 			{
@@ -136,7 +136,7 @@ test('run() processes one file with expected PostCSS plugins', () => {
 
 test('run() processes one file with expected source CSS', () => {
 	const postcssProcessSpy = jest.spyOn(postcss(), 'process')
-	
+
 	const config = {
 		files: [
 			{
@@ -160,7 +160,7 @@ test('run() processes one file with expected source CSS', () => {
 test('run() writes one file to destination', () => {
 	const fsEnsureDirSpy = jest.spyOn(fs, 'ensureDir');
 	const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
-	
+
 	const config = {
 		files: [
 			{
@@ -203,7 +203,32 @@ test('run() writes multiple files to destinations', () => {
 		});
 });
 
-test('run() displays warnings', async () => {	
+
+
+test('run() writes multiple destination files from one source', () => {
+    const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
+
+
+    const config = {
+        files: [
+            {
+                src: srcFilepath1,
+                dest: [destFilepath1, destFilepath2]
+            }
+        ]
+    };
+
+
+    expect.assertions(3);
+    return postCssPlugin().run(config, options)
+        .then(response => {
+            expect(fsWriteFileSpy.mock.calls.length).toBe(2);
+            expect(fsWriteFileSpy.mock.calls[0]).toEqual([destFilepath1, cssContent1]);
+            expect(fsWriteFileSpy.mock.calls[1]).toEqual([destFilepath2, cssContent1]);
+        });
+});
+
+test('run() displays warnings', async () => {
 	loggerWarnSpy = jest.spyOn(logger, 'warn');
 
 	const config = {
@@ -219,8 +244,8 @@ test('run() displays warnings', async () => {
 		'warning 1',
 		'warning 2'
 	]);
-	
-	await postCssPlugin().run(config, options); 
+
+	await postCssPlugin().run(config, options);
 
 	const expectedWarning1 = 'warning: warning 1';
 	const expectedWarning2 = 'warning: warning 2';

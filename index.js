@@ -53,7 +53,7 @@ const processFile = (fileConfig, plugins, logger) => {
 const displayWarnings = (result, logger) => {
 	const warnings = result.warnings();
 	warnings.forEach(warning => logger.warn(`${warning.type}: ${warning.text}`));
-}
+};
 
 module.exports = skeletorPluginPostCss = () => (
 	{
