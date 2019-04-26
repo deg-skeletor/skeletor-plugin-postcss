@@ -3,8 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 
 const run = (config, {logger}) => {
-
-    if(!Array.isArray(config.files)) {
+    if (!Array.isArray(config.files)) {
         return Promise.resolve({
             status: 'error',
             message: 'Configuration does not contain a valid "files" property.'
@@ -28,17 +27,30 @@ const run = (config, {logger}) => {
                 status: 'error',
                 message: e.message
             };
-		});
-	};
+        });
+};
 
 const processFile = (fileConfig, plugins, logger) => {
-    const destinationArray = [];
     const srcFilepath = path.resolve(process.cwd(), fileConfig.src);
-	handleDestinations(fileConfig, destinationArray);
+    const destinationArray = getDestinations(fileConfig);
+    const params = {plugins, logger, srcFilepath, destinationArray};
+    const promises = initOutput(params);
+    return Promise.all(promises);
+};
 
-    const promises = destinationArray.map(dest => {
+const getDestinations = fileConfig => {
+    if (Array.isArray(fileConfig.dest)) {
+        return [...fileConfig.dest];
+    }
+    return [fileConfig.dest];
+};
+
+const initOutput = params => {
+    const {plugins, logger, srcFilepath, destinationArray} = params;
+    return destinationArray.map(dest => {
         const destFilepath = path.resolve(process.cwd(), dest);
-        return fs.readFile(srcFilepath)
+        return fs
+            .readFile(srcFilepath)
             .then(contents =>
                 postcss(plugins).process(contents, {
                     from: srcFilepath,
@@ -47,32 +59,16 @@ const processFile = (fileConfig, plugins, logger) => {
             )
             .then(result => {
                 displayWarnings(result, logger);
-                return fs.ensureDir(path.dirname(destFilepath))
-                    .then(() => fs.writeFile(destFilepath, result.css));
-			});
-		});
-
-		return Promise.all(promises);
+                return fs.ensureDir(path.dirname(destFilepath)).then(() => fs.writeFile(destFilepath, result.css));
+            });
+    });
 };
-
-
-const handleDestinations = (fileConfig, destinationArray) => {
-    if(Array.isArray(fileConfig.dest)) {
-        fileConfig.dest.map(dest => destinationArray.push(dest));
-    } else {
-        destinationArray.push(fileConfig.dest);
-    }
-};
-
 
 const displayWarnings = (result, logger) => {
     const warnings = result.warnings();
     warnings.forEach(warning => logger.warn(`${warning.type}: ${warning.text}`));
 };
 
-
-module.exports = skeletorPluginPostCss = () => (
-    {
-        run
-    }
-);
+module.exports = skeletorPluginPostCss = () => ({
+    run
+});
