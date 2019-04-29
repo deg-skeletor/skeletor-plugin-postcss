@@ -7,7 +7,7 @@ This plugin transforms CSS using [PostCSS](https://github.com/postcss/postcss) a
 ## Installation
 Install this plugin into your Skeletor-equipped project via the following terminal command:
 ```
-    npm install --save-dev git+https://git@github.com/deg-skeletor/skeletor-plugin-postcss.git
+    npm install --save-dev @deg-skeletor/plugin-postcss
 ```
 
 ## Configuration
